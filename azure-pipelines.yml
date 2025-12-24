@@ -53,15 +53,17 @@ stages:
     steps:
     - script: |
         curl -fsSL https://github.com/infracost/infracost/releases/latest/download/infracost-darwin-arm64.tar.gz -o infracost.tar.gz
-        tar -xzf infracost.tar.gz
-        chmod +x infracost
-        ./infracost --version
-        ./infracost breakdown \
+        mkdir infracost-bin
+        tar -xzf infracost.tar.gz -C infracost-bin
+        chmod +x infracost-bin/infracost
+        infracost-bin/infracost --version
+        infracost-bin/infracost breakdown \
           --path $(workingPath) \
           --format table
       displayName: "Run Infracost"
       env:
         INFRACOST_API_KEY: $(INFRACOST_API_KEY)
+
 
 
 
@@ -71,11 +73,14 @@ stages:
   dependsOn: TerraformInitPlan
   jobs:
   - job: TfsecScan
+    displayName: "Run tfsec"
     steps:
-    - task: tfsec@1
-      inputs:
-        version: 'v1.26.0'
-        dir: '$(System.DefaultWorkingDirectory)'
+    - script: |
+        curl -fsSL https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-darwin-arm64 -o tfsec
+        chmod +x tfsec
+        ./tfsec $(workingPath)
+      displayName: "tfsec scan"
+
 
 # ---------------- Stage 4: Manual Validation ----------------
 - stage: ManualValidation
