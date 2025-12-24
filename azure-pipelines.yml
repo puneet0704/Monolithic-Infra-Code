@@ -49,15 +49,21 @@ stages:
   dependsOn: TerraformInitPlan
   jobs:
   - job: InfracostJob
+    displayName: "Infracost Breakdown"
     steps:
     - script: |
-        curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
-        infracost breakdown \
+        curl -fsSL https://github.com/infracost/infracost/releases/latest/download/infracost-darwin-arm64.tar.gz -o infracost.tar.gz
+        tar -xzf infracost.tar.gz
+        chmod +x infracost
+        ./infracost --version
+        ./infracost breakdown \
           --path $(workingPath) \
           --format table
-      displayName: "Infracost Breakdown"
+      displayName: "Run Infracost"
       env:
         INFRACOST_API_KEY: $(INFRACOST_API_KEY)
+
+
 
 # ---------------- Stage 3: Security Scan (tfsec) ----------------
 - stage: SecurityScan
@@ -83,7 +89,8 @@ stages:
     steps:
     - task: ManualValidation@1
       inputs:
-        instructions: 'Review plan, cost & security scan before approval'
+        notifyUsers: 'puneet.070402@gmail.com'
+        approvers: 'puneet.070402@gmail.com'
 
 # ---------------- Stage 5: Terraform Apply ----------------
 - stage: TerraformApply
