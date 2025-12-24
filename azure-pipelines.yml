@@ -58,7 +58,7 @@ stages:
         chmod +x infracost-bin/infracost
         infracost-bin/infracost --version
         infracost-bin/infracost breakdown \
-          --path $(workingPath) \
+          --path '$(System.DefaultWorkingDirectory)/Prod' --format table
           --format table
       displayName: "Run Infracost"
       env:
