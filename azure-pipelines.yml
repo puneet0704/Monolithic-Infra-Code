@@ -53,16 +53,16 @@ stages:
     steps:
     - script: |
         curl -fsSL https://github.com/infracost/infracost/releases/latest/download/infracost-darwin-arm64.tar.gz -o infracost.tar.gz
-        mkdir infracost-bin
-        tar -xzf infracost.tar.gz -C infracost-bin
-        chmod +x infracost-bin/infracost
-        infracost-bin/infracost --version
-        infracost-bin/infracost breakdown \
-          --path '$(System.DefaultWorkingDirectory)/Prod' --format table
+        tar -xzf infracost.tar.gz
+        chmod +x infracost-darwin-arm64
+        ./infracost-darwin-arm64 --version
+        ./infracost-darwin-arm64 breakdown \
+          --path $(workingPath) \
           --format table
       displayName: "Run Infracost"
       env:
         INFRACOST_API_KEY: $(INFRACOST_API_KEY)
+
 
 
 
