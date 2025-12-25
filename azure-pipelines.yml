@@ -44,24 +44,24 @@ stages:
         environmentServiceNameAzureRM: 'InfraConnection'
 
 # ---------------- Stage 2: Cost Estimation (Infracost) ----------------
-- stage: CostEstimation
-  displayName: "Infrastructure Cost Estimation"
-  dependsOn: TerraformInitPlan
-  jobs:
-  - job: InfracostJob
-    displayName: "Infracost Breakdown"
-    steps:
-    - script: |
-        curl -fsSL https://github.com/infracost/infracost/releases/latest/download/infracost-darwin-arm64.tar.gz -o infracost.tar.gz
-        tar -xzf infracost.tar.gz
-        chmod +x infracost-darwin-arm64
-        ./infracost-darwin-arm64 --version
-        ./infracost-darwin-arm64 breakdown \
-          --path $(workingPath) \
-          --format table
-      displayName: "Run Infracost"
-      env:
-        INFRACOST_API_KEY: $(INFRACOST_API_KEY)
+# - stage: CostEstimation
+#   displayName: "Infrastructure Cost Estimation"
+#   dependsOn: TerraformInitPlan
+#   jobs:
+#   - job: InfracostJob
+#     displayName: "Infracost Breakdown"
+#     steps:
+#     - script: |
+#         curl -fsSL https://github.com/infracost/infracost/releases/latest/download/infracost-darwin-arm64.tar.gz -o infracost.tar.gz
+#         tar -xzf infracost.tar.gz
+#         chmod +x infracost-darwin-arm64
+#         ./infracost-darwin-arm64 --version
+#         ./infracost-darwin-arm64 breakdown \
+#           --path $(workingPath) \
+#           --format table
+#       displayName: "Run Infracost"
+#       env:
+#         INFRACOST_API_KEY: $(INFRACOST_API_KEY)
 
 
 
@@ -86,7 +86,6 @@ stages:
 - stage: ManualValidation
   displayName: "Manual Approval"
   dependsOn:
-    - CostEstimation
     - SecurityScan
   jobs:
   - job: ManualApproval
